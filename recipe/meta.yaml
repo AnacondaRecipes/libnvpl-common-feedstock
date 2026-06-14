@@ -1,5 +1,4 @@
 {% set version = "0.3.5" %}
-{% set arm_variant_type = "sbsa" %}
 
 package:
   name: libnvpl-common-dev
@@ -11,11 +10,9 @@ source:
 
 build:
   number: 0
-  # 'technically' noarch (ships only cmake config text files), but its host
-  # dep _nvpl_dev_mutex is published as a linux-aarch64 package on pkgs/main,
-  # so a noarch build (which PBP runs on linux-64) could not resolve it.
-  # Built as a linux-aarch64 package with 'skip' instead — matches the rest
-  # of the NVPL chain and the cuda-runtime-feedstock convention.
+  # Built as linux-aarch64, not noarch: the host dep _nvpl_dev_mutex is a
+  # linux-aarch64 package on pkgs/main, so a noarch build (PBP runs noarch on
+  # linux-64) could not resolve it. Matches the NVPL chain / cuda-runtime.
   skip: true  # [not (linux and aarch64)]
   script:
     - cp -rv lib $PREFIX
