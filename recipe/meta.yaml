@@ -22,7 +22,6 @@ requirements:
     - _nvpl_dev_mutex
   run:
     - {{ pin_compatible('_nvpl_dev_mutex', exact=True) }}
-    - __unix
 
 test:
   commands:
