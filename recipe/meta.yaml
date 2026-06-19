@@ -9,7 +9,10 @@ source:
   sha256: 346d2137620114e7692bb78855a585d24bad300d77522f0f161e8c6e439c62e1
 
 build:
-  number: 0
+  # Bumped to 1: rebuild libnvpl-common-dev so its mutex run dep is unpinned
+  # (was an exact pin_compatible, which froze _nvpl_dev_mutex at build 0 and
+  # blocked rebuilding the mutex / adding the libnvpl-dev metapackage).
+  number: 1
   # Built as linux-aarch64, not noarch: the host dep _nvpl_dev_mutex is a
   # linux-aarch64 package on pkgs/main, so a noarch build (PBP runs noarch on
   # linux-64) could not resolve it. Matches the NVPL chain / cuda-runtime.
@@ -21,7 +24,11 @@ requirements:
   host:
     - _nvpl_dev_mutex
   run:
-    - {{ pin_compatible('_nvpl_dev_mutex', exact=True) }}
+    # Unpinned, matching the other NVPL component -dev packages. The mutex
+    # coordinates the matching set via its own run_constrained; consumers must
+    # NOT exact-pin the mutex (that freezes it). See AnacondaRecipes/libnvpl
+    # PR #2 for the failure this caused.
+    - _nvpl_dev_mutex
 
 test:
   commands:
